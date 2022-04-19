@@ -1,14 +1,19 @@
-jQuery(document).ready(function(e) {
-    jQuery('#onedayservice').click(function (){
-        jQuery.ajax({
-            type: "GET",
-            url: obj.paymenturl, 
-            data: {'servicetype':'D'},
-            success: function(msg){      
-                console.log(msg);
+jQuery(document).ready(function($) {
+    jQuery('#onedayservice').click(function (event){
+        event.preventDefault();
+        $.ajax({
+            url: ajax_payment.ajaxurl,
+            type: 'POST',
+            data:{ 
+              servicetype: 'D',
+              action: 'make_legalx_payment',
+              _ajax_nonce: ajax_payment.nonce,
+              
+            },
+            success: function( data ){
+              
+              console.log( data );
             }
-        });
+          });
     });
-
-
 });

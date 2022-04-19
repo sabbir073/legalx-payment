@@ -17,35 +17,6 @@ Text Domain:  Legalx-Payment
 
 defined( 'ABSPATH' ) or die( 'Hey! You can not access to this' );
 
-
-
-add_action( 'wp_enqueue_scripts', 'ajax_scripts_payment' );
-
-
-function ajax_scripts_payment() {
-    wp_register_script( 'paymentajax', plugin_dir_url( __FILE__ ).'payment.js', array(), null, true );
-    $arr = array(
-        'paymenturl' => plugin_dir_url( __FILE__ ) .'payment.php'
-    );
-    wp_localize_script('paymentajax','obj', $arr );
-
-    wp_enqueue_script('paymentajax');
-}
-
-
-add_action( 'wp_enqueue_scripts', 'ajax_scripts_payment_confirm' );
-
-
-function ajax_scripts_payment_confirm() {
-    wp_register_script( 'paymentconfirmajax', plugin_dir_url( __FILE__ ).'payment-confirm.js', array(), null, true );
-    $arr = array(
-        'paymentconfirmurl' => plugin_dir_url( __FILE__ ) .'payment-confirm.php'
-    );
-    wp_localize_script('paymentconfirmajax','obj',$arr );
-
-    wp_enqueue_script('paymentconfirmajax');
-}
-
 add_action( 'wp_enqueue_scripts', 'custom_jquery_script' );
 
 function custom_jquery_script(){
@@ -53,3 +24,38 @@ function custom_jquery_script(){
     wp_enqueue_script('jquery');
 }
 
+
+
+add_action( 'wp_enqueue_scripts', 'ajax_scripts_payment' );
+
+function ajax_scripts_payment(){
+  wp_register_script( 'paymentajax', plugin_dir_url( __FILE__ ).'payment.js', array(), '2.1.2', true );
+  wp_enqueue_script( 'paymentajax' );
+  wp_localize_script( 
+    'paymentajax', 
+    'ajax_payment', 
+    array( 
+        'ajaxurl' => admin_url( 'admin-ajax.php' ),
+        'nonce'    => wp_create_nonce('payment_ajax_nonce')
+     ) 
+  );
+}
+
+
+add_action( 'wp_enqueue_scripts', 'ajax_scripts_payment_confirm' );
+
+function ajax_scripts_payment_confirm(){
+  wp_register_script( 'paymentconfirmajax', plugin_dir_url( __FILE__ ).'payment-confirm.js', array(), '2.1.2', true );
+  wp_enqueue_script( 'paymentconfirmajax' );
+  wp_localize_script( 
+    'paymentconfirmajax', 
+    'ajax_payment_confirm', 
+    array( 
+        'ajaxurl' => admin_url( 'admin-ajax.php' ),
+        'nonce'    => wp_create_nonce('payment_confirm_ajax_nonce')
+    ) 
+  );
+}
+
+
+require 'payment.php';
